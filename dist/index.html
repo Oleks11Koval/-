@@ -479,6 +479,10 @@ html[data-role="ct"] .nav a[data-r="ct"] { display: block; }
 /* ---- Burger ------------------------------------------------------------ */
 .bgr { display: none; }
 
+
+/* ---- Menu wrapper: transparent on desktop (children join the header row) -- */
+.menu, .menu__in { display: contents; }
+
 /* ---- Mid widths -------------------------------------------------------- */
 @media (min-width: 861px) and (max-width: 1120px) {
   .hd { gap: 8px; padding-left: 16px; }
@@ -486,10 +490,13 @@ html[data-role="ct"] .nav a[data-r="ct"] { display: block; }
   .sw button { padding: 9px 12px; }
   .nav { gap: 2px; }
   .nav a { padding: 8px 9px; font-size: 13.5px; }
-  .hd > .btn { padding: 12px 16px; }
+  .menu__in > .btn { padding: 12px 16px; }
 }
 
-/* ---- Mobile ------------------------------------------------------------ */
+/* ---- Mobile ------------------------------------------------------------
+   The role switch, links and contacts button live in one collapsible panel
+   opened by the burger. Height animates via grid rows (no fixed max-height,
+   so any number of links fits); very short screens scroll inside the panel. */
 @media (max-width: 860px) {
   :root { --header-offset: 92px; }
 
@@ -501,12 +508,9 @@ html[data-role="ct"] .nav a[data-r="ct"] { display: block; }
     border-radius: 26px;
   }
   .logo { order: 1; font-size: 17px; }
-  .sw { order: 2; margin-left: auto; }
-  .sw button { padding: 9px 13px; font-size: 13px; }
-  .hd > .btn { display: none; }
 
   .bgr {
-    order: 3;
+    order: 2;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -514,6 +518,7 @@ html[data-role="ct"] .nav a[data-r="ct"] { display: block; }
     gap: 5px;
     width: 44px;
     height: 44px;
+    margin-left: auto;
     padding: 0 12px;
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, .25);
@@ -528,22 +533,41 @@ html[data-role="ct"] .nav a[data-r="ct"] { display: block; }
   .hd.open .bgr i:nth-child(2) { opacity: 0; }
   .hd.open .bgr i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  /* Collapsible nav */
-  .nav {
-    order: 4;
+  /* Collapsible panel */
+  .menu {
+    order: 3;
     flex: 0 0 100%;
-    flex-direction: column;
-    gap: 4px;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     opacity: 0;
-    overflow: hidden;
     pointer-events: none;
-    transition: max-height .4s var(--ease-out), opacity .3s, padding .3s;
+    transition: grid-template-rows .45s var(--ease-out), opacity .3s;
   }
-  .hd.open .nav { max-height: 340px; opacity: 1; padding: 10px 0 6px; pointer-events: auto; }
+  .hd.open .menu { grid-template-rows: 1fr; opacity: 1; pointer-events: auto; }
+  .menu__in {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+    transition: padding .3s;
+  }
+  .hd.open .menu__in {
+    padding: 12px 0 6px;
+    max-height: calc(100svh - 120px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  /* Role switch: full-width segmented control at the top of the panel */
+  .sw { width: 100%; }
+  .sw button { padding: 14px 10px; font-size: 16px; }
+  .sw button svg { width: 18px; height: 18px; }
+
+  .menu__in > .btn { display: none; } /* replaced by .nav__contact below */
+
+  .nav { flex-direction: column; gap: 6px; width: 100%; margin: 0; }
   .nav a {
     flex: none;
     text-align: left;
@@ -553,15 +577,11 @@ html[data-role="ct"] .nav a[data-r="ct"] { display: block; }
     background: rgba(255, 255, 255, .06);
     white-space: normal;
   }
-  .nav a.nav__contact { display: block; text-align: center; font-weight: 600; color: #000; background: var(--acc); margin-top: 6px; }
+  .nav a.nav__contact { display: block; text-align: center; font-weight: 600; color: #000; background: var(--acc); margin-top: 4px; }
   .nav a.nav__contact:hover { background: #fff; color: #000; }
 }
 
-@media (max-width: 420px) {
-  .logo .lm { display: none; }
-  .sw button { padding: 9px 14px; }
-  .sw button svg { display: none; }
-}
+@media (max-width: 420px) { .logo .lm { display: none; } }
 @media (max-width: 380px) { .logo { font-size: 15px; } }</style>
   <style>/* ==========================================================================
    layout.css — page structure: roles, hero, sections, grids, footer
@@ -963,6 +983,7 @@ html.js .gate {
     <header class="g hd">
       <button class="logo" id="logo" type="button">Hack’11<span class="lm"> Мотивашка</span></button>
 
+      <div class="menu"><div class="menu__in">
       <div class="sw" id="sw" data-r="it" role="group" aria-label="Роль">
         <span class="sw-p" aria-hidden="true"></span>
         <button type="button" data-role="it" class="on" aria-pressed="true">
@@ -987,6 +1008,7 @@ html.js .gate {
       </nav>
 
       <a class="btn" href="#contacts">Мої контакти</a>
+      </div></div>
       <button class="bgr" id="bgr" type="button" aria-label="Меню" aria-expanded="false"><i></i><i></i><i></i></button>
     </header>
   </div>
@@ -1675,7 +1697,7 @@ html.js .gate {
         e.stopPropagation();
         setOpen(!header.classList.contains('open'));
       });
-      $$('.nav a, .hd > .btn').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+      $$('.nav a, .menu__in > .btn').forEach((a) => a.addEventListener('click', () => setOpen(false)));
       document.addEventListener('click', (e) => { if (!header.contains(e.target)) setOpen(false); });
       addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
       addEventListener('resize', () => { if (innerWidth > MOBILE_MAX) setOpen(false); });
@@ -2042,6 +2064,7 @@ html.js .gate {
 
   function change(role) {
     if (role === App.roles.get()) return;
+    App.mobileMenu.close(); // collapse the burger panel right away
 
     if (prefersReducedMotion) {
       App.roles.apply(role);

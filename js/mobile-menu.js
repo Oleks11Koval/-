@@ -23,7 +23,7 @@
         e.stopPropagation();
         setOpen(!header.classList.contains('open'));
       });
-      $$('.nav a, .hd > .btn').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+      $$('.nav a, .menu__in > .btn').forEach((a) => a.addEventListener('click', () => setOpen(false)));
       document.addEventListener('click', (e) => { if (!header.contains(e.target)) setOpen(false); });
       addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
       addEventListener('resize', () => { if (innerWidth > MOBILE_MAX) setOpen(false); });

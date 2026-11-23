@@ -8,6 +8,7 @@
 
   function change(role) {
     if (role === App.roles.get()) return;
+    App.mobileMenu.close(); // collapse the burger panel right away
 
     if (prefersReducedMotion) {
       App.roles.apply(role);
