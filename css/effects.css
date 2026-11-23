@@ -1,0 +1,21 @@
+/* ==========================================================================
+   effects.css — logo easter-egg overlay (hearts + Pac-Man)
+   ========================================================================== */
+
+.fx { position: fixed; inset: 0; z-index: 90; pointer-events: none; overflow: hidden; }
+.fx div { position: absolute; margin: 0; }
+
+.pac {
+  left: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--acc);
+  clip-path: polygon(50% 50%, 100% 22%, 100% 0, 0 0, 0 100%, 100% 100%, 100% 78%);
+  animation: chomp .24s steps(3, end) infinite alternate;
+}
+.pac::after { content: ""; position: absolute; width: 6px; height: 6px; background: #000; top: 9px; left: 24px; }
+@keyframes chomp {
+  to { clip-path: polygon(50% 50%, 100% 50%, 100% 0, 0 0, 0 100%, 100% 100%, 100% 50%); }
+}
+.dot { width: 8px; height: 8px; background: #fff; }

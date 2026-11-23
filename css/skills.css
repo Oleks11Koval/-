@@ -1,0 +1,87 @@
+/* ==========================================================================
+   skills.css — interactive skills widget (tile grid + detail card)
+   ========================================================================== */
+
+.sk { padding: 18px 0 8px; border-top: 1px solid rgba(255, 255, 255, .1); }
+.sk-h { font-weight: 600; color: var(--acc); margin-bottom: 14px; }
+.sk-main { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; align-items: stretch; }
+.sk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 4px 10px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 16px;
+  color: var(--mut);
+  font: 500 11px/1.2 var(--font);
+  text-align: center;
+  cursor: pointer;
+  transition: transform .2s, color .2s, background .2s, border-color .2s, box-shadow .2s;
+}
+.tile svg { width: 30px; height: 30px; stroke-width: 1.5; }
+.tile:hover { transform: translateY(-4px) rotate(-2deg); color: var(--acc); border-color: var(--acc); }
+.tile.on { color: #000; background: var(--acc); border-color: var(--acc); box-shadow: 0 0 22px rgba(155, 229, 72, .5); }
+
+.sk-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-height: 240px;
+  padding: 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(155, 229, 72, .4);
+  background: rgba(155, 229, 72, .06);
+}
+.sk-logo { width: 76px; height: 76px; color: var(--acc); filter: drop-shadow(0 0 14px rgba(155, 229, 72, .6)); }
+.sk-logo svg { width: 100%; height: 100%; }
+.sk-card h4 { margin: 0; font-size: 26px; letter-spacing: -.02em; }
+.sk-card p { margin: 0; }
+
+.sk-card.swap .sk-logo { animation: pop .55s cubic-bezier(.2, 1.4, .4, 1); }
+.sk-card.swap h4, .sk-card.swap p { animation: sk-slide-in .45s ease backwards; }
+@keyframes sk-slide-in { from { transform: translateX(26px); opacity: 0; } }
+
+.sk-nav { position: absolute; top: 14px; right: 14px; display: flex; gap: 6px; }
+.sk-nav button {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .25);
+  background: rgba(255, 255, 255, .07);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background .2s, color .2s, transform .15s;
+}
+.sk-nav button:hover { background: var(--acc); color: #000; transform: scale(1.1); }
+
+/* Auto-advance timer (animationend moves to the next skill) */
+.sk-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--acc);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  animation: sk-fill 4.5s linear forwards;
+}
+.sk-card:hover .sk-bar, .sk-card.is-offscreen .sk-bar { animation-play-state: paused; }
+@keyframes sk-fill { to { transform: scaleX(1); } }
+
+@media (max-width: 860px) { .sk-main { grid-template-columns: 1fr; } }
+@media (max-width: 520px) {
+  .sk-grid { grid-template-columns: repeat(3, 1fr); }
+  .sk-card { min-height: 0; padding: 20px 18px; }
+  .sk-logo { width: 60px; height: 60px; }
+  .sk-card h4 { font-size: 22px; }
+}

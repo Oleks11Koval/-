@@ -1,0 +1,199 @@
+/* ==========================================================================
+   header.css — floating header: logo, role switch, navigation, burger
+   ========================================================================== */
+
+.hw {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  left: 0;
+  right: 0;
+  z-index: 70;
+  padding: 0 12px;
+  animation: header-drop .8s var(--ease-out) backwards;
+  transition: transform .9s var(--ease-out), opacity .6s;
+}
+@keyframes header-drop { from { transform: translateY(-120%); opacity: 0; } }
+
+/* Hidden while the role gate is open */
+html.locked .hw { transform: translateY(-130%); opacity: 0; animation: none; }
+
+.hd {
+  max-width: 1180px;
+  margin: 0 auto;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px 10px 24px;
+}
+
+/* ---- Logo -------------------------------------------------------------- */
+.logo {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: 800 clamp(17px, 2.4vw, 22px)/1 var(--font);
+  color: var(--acc);
+  white-space: nowrap;
+  transition: transform .15s, text-shadow .2s;
+}
+.logo:hover { text-shadow: 0 0 18px var(--acc); transform: scale(1.04); }
+.logo:active { transform: scale(.92); }
+
+/* ---- Role switch ------------------------------------------------------- */
+.sw {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: none;
+  isolation: isolate;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .18);
+}
+.sw-p { /* sliding pill */
+  position: absolute;
+  z-index: -1;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 999px;
+  background: var(--acc);
+  box-shadow: 0 0 20px rgba(155, 229, 72, .65);
+  transition: transform .6s cubic-bezier(.3, 1.45, .4, 1);
+  will-change: transform;
+}
+.sw[data-r="ct"] .sw-p { transform: translateX(100%); }
+.sw button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 16px;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  color: var(--mut);
+  font: 600 14px/1 var(--font);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color .3s, transform .15s;
+}
+.sw button svg { width: 16px; height: 16px; flex: none; }
+.sw button:hover { color: #fff; }
+.sw button:active { transform: scale(.93); }
+.sw button.on { color: #000; }
+.sw button.on svg { animation: pop .55s cubic-bezier(.2, 1.4, .4, 1); }
+.sw button:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+/* ---- Navigation -------------------------------------------------------- */
+.nav { display: flex; gap: 4px; margin: 0 auto; scrollbar-width: none; }
+.nav a {
+  color: var(--mut);
+  text-decoration: none;
+  font-size: 15px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: background .2s, color .2s;
+}
+.nav a:hover { color: #fff; background: rgba(255, 255, 255, .1); }
+.nav a.on { color: #000; background: var(--acc); box-shadow: 0 0 18px rgba(155, 229, 72, .6); }
+
+/* Role-specific links: only the active role's links are shown */
+.nav a[data-r] { display: none; }
+html[data-role="it"] .nav a[data-r="it"],
+html[data-role="ct"] .nav a[data-r="ct"] { display: block; }
+
+.nav__contact { display: none; } /* mobile-only duplicate of the CTA button */
+
+/* ---- Burger ------------------------------------------------------------ */
+.bgr { display: none; }
+
+/* ---- Mid widths -------------------------------------------------------- */
+@media (min-width: 861px) and (max-width: 1120px) {
+  .hd { gap: 8px; padding-left: 16px; }
+  .logo .lm { display: none; }
+  .sw button { padding: 9px 12px; }
+  .nav { gap: 2px; }
+  .nav a { padding: 8px 9px; font-size: 13.5px; }
+  .hd > .btn { padding: 12px 16px; }
+}
+
+/* ---- Mobile ------------------------------------------------------------ */
+@media (max-width: 860px) {
+  :root { --header-offset: 92px; }
+
+  .hw { padding: 0 10px; }
+  .hd {
+    flex-wrap: wrap;
+    gap: 0 10px;
+    padding: 10px 12px 8px 16px;
+    border-radius: 26px;
+  }
+  .logo { order: 1; font-size: 17px; }
+  .sw { order: 2; margin-left: auto; }
+  .sw button { padding: 9px 13px; font-size: 13px; }
+  .hd > .btn { display: none; }
+
+  .bgr {
+    order: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: none;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .25);
+    background: rgba(255, 255, 255, .07);
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+  }
+  .bgr:hover, .hd.open .bgr { background: rgba(155, 229, 72, .18); border-color: var(--acc); }
+  .bgr i { display: block; height: 2px; background: #fff; border-radius: 2px; transition: transform .3s, opacity .2s, background .2s; }
+  .hd.open .bgr i { background: var(--acc); }
+  .hd.open .bgr i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hd.open .bgr i:nth-child(2) { opacity: 0; }
+  .hd.open .bgr i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Collapsible nav */
+  .nav {
+    order: 4;
+    flex: 0 0 100%;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height .4s var(--ease-out), opacity .3s, padding .3s;
+  }
+  .hd.open .nav { max-height: 340px; opacity: 1; padding: 10px 0 6px; pointer-events: auto; }
+  .nav a {
+    flex: none;
+    text-align: left;
+    font-size: 17px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .06);
+    white-space: normal;
+  }
+  .nav a.nav__contact { display: block; text-align: center; font-weight: 600; color: #000; background: var(--acc); margin-top: 6px; }
+  .nav a.nav__contact:hover { background: #fff; color: #000; }
+}
+
+@media (max-width: 420px) {
+  .logo .lm { display: none; }
+  .sw button { padding: 9px 14px; }
+  .sw button svg { display: none; }
+}
+@media (max-width: 380px) { .logo { font-size: 15px; } }

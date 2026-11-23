@@ -1,0 +1,141 @@
+/* ==========================================================================
+   components.css — reusable UI pieces: glass panel, button, chip, card, item
+   ========================================================================== */
+
+/* ---- Glass panel ------------------------------------------------------- */
+.g {
+  position: relative;
+  overflow: hidden;
+  background: rgba(8, 12, 8, .58);
+  -webkit-backdrop-filter: blur(22px) saturate(1.7);
+  backdrop-filter: blur(22px) saturate(1.7);
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 28px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .4),
+    inset 0 -1px 0 rgba(255, 255, 255, .05),
+    0 24px 60px rgba(0, 0, 0, .5);
+  --mx: 50%;
+  --my: 0%;
+  transition: transform .35s var(--ease-out), border-color .3s, box-shadow .3s;
+}
+.g::before { /* cursor-following glow */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(155, 229, 72, .15), transparent 60%);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.g:hover::before { opacity: 1; }
+.g:hover { border-color: rgba(155, 229, 72, .55); }
+.g > * { position: relative; }
+
+/* ---- Button ------------------------------------------------------------ */
+.btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  font: 600 15px/1 var(--font);
+  color: #000;
+  background: var(--acc);
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 24px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 0 0 rgba(155, 229, 72, 0);
+  transition: transform .15s, box-shadow .25s;
+}
+.btn:hover, .btn:focus-visible { box-shadow: 0 0 28px rgba(155, 229, 72, .75); outline: none; }
+.btn::after { /* shine sweep */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 40%;
+  height: 100%;
+  background: rgba(255, 255, 255, .55);
+  transform: skewX(-22deg);
+  transition: left .6s;
+}
+.btn:hover::after { left: 130%; }
+.btn--outline { background: rgba(255, 255, 255, .08); color: var(--acc); border: 1px solid var(--acc); }
+.btn--outline:hover { background: var(--acc); color: #000; }
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .7);
+  transform: scale(0);
+  pointer-events: none;
+  animation: ripple .6s ease-out forwards;
+}
+@keyframes ripple { to { transform: scale(1); opacity: 0; } }
+
+/* ---- Chips ------------------------------------------------------------- */
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+.chip {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .16);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  transition: transform .2s, border-color .2s;
+}
+.chip:hover { transform: translateY(-3px) rotate(-2deg); border-color: var(--acc); }
+
+/* ---- Card & list item -------------------------------------------------- */
+.card { padding: clamp(20px, 3vw, 34px); overflow-wrap: break-word; }
+.card h3 {
+  margin: 0 0 12px;
+  font-size: clamp(20px, 2.4vw, 26px);
+  line-height: 1.25;
+  letter-spacing: -.02em;
+  transition: color .25s;
+}
+.card:hover h3 { color: var(--acc); }
+.card p { color: var(--mut); font-size: clamp(16px, 1.6vw, 19px); }
+
+.it {
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  color: var(--mut);
+  transition: transform .25s, color .25s;
+}
+.it:hover { transform: translateX(8px); color: #fff; }
+.it b { color: var(--acc); font-weight: 600; }
+
+/* ---- Photo frame ------------------------------------------------------- */
+.ph {
+  margin: 0;
+  padding: 10px;
+  border-radius: 32px;
+  animation: bob 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+.ph img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 24px;
+  transition: transform .8s var(--ease-out);
+}
+.ph:hover img { transform: scale(1.05); }
+@keyframes bob { 50% { translate: 0 -10px; } }
+
+@media (max-width: 860px) {
+  .g, .card { border-radius: 22px; }
+  .card { padding: 20px 18px; }
+  .ph { border-radius: 24px; }
+  .ph img { border-radius: 16px; }
+}
+@media (max-width: 520px) {
+  .chips { gap: 8px; }
+  .chip { font-size: 13px; padding: 7px 12px; }
+  .it:hover { transform: none; }
+}

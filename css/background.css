@@ -1,0 +1,138 @@
+/* ==========================================================================
+   background.css — fixed, decorative scenery layers
+
+   PERFORMANCE NOTES
+   - Every continuously animated layer animates ONLY `transform`/`opacity`,
+     so the browser runs it on the GPU compositor without repainting.
+   - Large `filter: blur()` layers were replaced with soft radial gradients
+     (visually equivalent, no per-frame blur cost).
+   ========================================================================== */
+
+.bg, .aur, .grid, .bl, .vig, .noise, .beam, .fl, #cv {
+  position: fixed;
+  pointer-events: none;
+}
+
+/* Slowly drifting base gradient (was: animated background-position) */
+.bg {
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  background: #000;
+}
+.bg::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 400%;
+  height: 400%;
+  background: linear-gradient(120deg, #000, #020d06, #000, #04140a, #000, #030f07);
+  animation: bg-flow 16s ease infinite;
+  will-change: transform;
+}
+@keyframes bg-flow { 50% { transform: translate(-75%, -75%); } }
+
+/* Rotating aurora */
+.aur {
+  left: 50%;
+  top: 50%;
+  width: 150vmax;
+  height: 150vmax;
+  margin: -75vmax 0 0 -75vmax;
+  z-index: -3;
+  background: conic-gradient(from 0deg,
+    transparent 0, rgba(46, 204, 113, .16) 12%, transparent 28%,
+    rgba(155, 229, 72, .1) 52%, transparent 66%,
+    rgba(15, 122, 58, .18) 84%, transparent 100%);
+  animation: aur-spin 50s linear infinite;
+  will-change: transform;
+}
+@keyframes aur-spin { to { transform: rotate(360deg); } }
+
+/* Moving grid (was: animated background-position) */
+.grid {
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 35%, #000 12%, transparent 72%);
+  mask-image: radial-gradient(ellipse at 50% 35%, #000 12%, transparent 72%);
+}
+.grid::before {
+  content: "";
+  position: absolute;
+  inset: -56px;
+  background-image:
+    linear-gradient(rgba(155, 229, 72, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(155, 229, 72, .08) 1px, transparent 1px);
+  background-size: 56px 56px;
+  animation: grid-move 12s linear infinite;
+  will-change: transform;
+}
+@keyframes grid-move { to { transform: translate(56px, 56px); } }
+
+/* Soft colour blobs (gradient instead of blur filter) */
+.bl {
+  z-index: -2;
+  width: 72vmax;
+  height: 72vmax;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--c) 0, var(--c) 30%,
+    color-mix(in srgb, var(--c) 50%, transparent) 67%, transparent 100%);
+  opacity: .1;
+  animation: blob-drift 20s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.b1 { --c: var(--acc2); top: calc(-15vmax - 12vmax); left: calc(-12vmax - 12vmax); }
+.b2 { --c: var(--acc); bottom: calc(-20vmax - 12vmax); right: calc(-14vmax - 12vmax); opacity: .07; animation-duration: 26s; }
+.b3 { --c: #0f7a3a; top: calc(35vh - 12vmax); left: calc(40vw - 12vmax); animation-duration: 31s; }
+@keyframes blob-drift { to { transform: translate(18vw, 12vh) scale(1.25); } }
+
+/* Particle network canvas */
+#cv { inset: 0; z-index: -1; }
+
+/* Vignette + film grain */
+.vig {
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(ellipse at 50% 40%, transparent 38%, rgba(0, 0, 0, .78) 100%);
+}
+.noise {
+  inset: 0;
+  z-index: -1;
+  opacity: .07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Scanning beam */
+.beam {
+  left: 0;
+  right: 0;
+  top: -4px;
+  height: 2px;
+  z-index: -1;
+  background: rgba(155, 229, 72, .22);
+  box-shadow: 0 0 24px 6px rgba(155, 229, 72, .12);
+  animation: beam-scan 11s linear infinite;
+  will-change: transform;
+}
+@keyframes beam-scan { to { transform: translateY(105vh); } }
+
+/* Floating pixel sprites (filled by background.js) */
+.fl { inset: 0; z-index: -1; overflow: hidden; }
+.fl > div { position: absolute; opacity: .16; will-change: transform; }
+
+/* Scroll progress bar */
+#pg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--acc);
+  box-shadow: 0 0 12px var(--acc);
+  z-index: 80;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  will-change: transform;
+}
